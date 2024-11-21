@@ -3,7 +3,7 @@ const express =  require("express")
 const cors = require("cors")
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
-
+const UserRoutes = require("./route/User")
 
 const app = express()
 
@@ -13,6 +13,10 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 
 
+//Routes
+app.use('/User', UserRoutes)
+
+//Connection String
 mongoose.connect(process.env.MONGO_URI)
 .then(() =>{
     app.listen(process.env.PORT, () => {
