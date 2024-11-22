@@ -21,7 +21,7 @@ const VehicleSchema = new Schema({
     },
     Capacity:{
         type: Number,
-        defualt: 30
+        defualt: 20
     }
 
 },{timestamps: true})

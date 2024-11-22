@@ -5,7 +5,7 @@ const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
 const UserRoutes = require("./route/User")
 const VehicleRoutes = require("./route/Vehicle")
-
+const SeatRoutes = require("./route/Seat")
 
 const app = express()
 
@@ -18,6 +18,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 //Routes
 app.use('/User', UserRoutes)
 app.use('/Vehicle', VehicleRoutes)
+app.use('/Seat', SeatRoutes)
 
 
 //Connection String
