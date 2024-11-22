@@ -15,11 +15,11 @@ const getUsers = async(req, res) =>{
 }
 
 const getUser = async (req, res) => {
-    const { _id } = req.params
+    const { id } = req.params
 
-    const user = await User.findById({_id})
+    const user = await User.findById({_id : id})
 
-    res.status(200).json({user})
+    res.status(200).json(user)
 }
 
 
@@ -99,10 +99,10 @@ const updateUser = async(req, res) => {
 
 
 const deleteUser = async(req, res) => {
-    const {_id} = req.params
+    const {id} = req.params
 
     try{
-        const user = await User.findByIdAndDelete({ _id })
+        const user = await User.findByIdAndDelete({ _id : id })
 
         res.status(204).json("User deleted")
     }

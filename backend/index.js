@@ -4,6 +4,8 @@ const cors = require("cors")
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
 const UserRoutes = require("./route/User")
+const VehicleRoutes = require("./route/Vehicle")
+
 
 const app = express()
 
@@ -15,6 +17,8 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 //Routes
 app.use('/User', UserRoutes)
+app.use('/Vehicle', VehicleRoutes)
+
 
 //Connection String
 mongoose.connect(process.env.MONGO_URI)
