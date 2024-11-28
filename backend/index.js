@@ -6,6 +6,8 @@ const mongoose = require("mongoose")
 const UserRoutes = require("./route/User")
 const VehicleRoutes = require("./route/Vehicle")
 const SeatRoutes = require("./route/Seat")
+const RouteRoutess = require("./route/Route")
+
 
 const app = express()
 
@@ -19,6 +21,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use('/User', UserRoutes)
 app.use('/Vehicle', VehicleRoutes)
 app.use('/Seat', SeatRoutes)
+app.use('/Route', RouteRoutess)
 
 
 //Connection String

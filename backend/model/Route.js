@@ -3,20 +3,24 @@ const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 const RouteSchema = new Schema({
-    Start_Location : {
+    origins : {
         type: String,
         required: true
     },
-    End_Location : {
+    destinations : {
         type: String,
         required: true
     },
-    Estimated_Time : {
+    duration : {
         type: String,
         required: true
     },
-    Distance:{
+    distance:{
         type: String,
         required: true
     }
 },{timestamps: true})
+
+
+
+module.exports = mongoose.model("Route", RouteSchema)
