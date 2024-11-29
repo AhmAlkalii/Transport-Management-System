@@ -2,7 +2,7 @@ const RRoute = require("../model/Route")
 const axios = require("axios")
 
 const createRoute = async (req, res) => {
-    const {origins, destinations } = req.query;
+    const {origins, destinations } = req.body;
     const params = {
         origins,
         destinations,
