@@ -3,7 +3,11 @@ const express =  require("express")
 const cors = require("cors")
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
-
+const UserRoutes = require("./route/User")
+const VehicleRoutes = require("./route/Vehicle")
+const SeatRoutes = require("./route/Seat")
+const RouteRoutess = require("./route/Route")
+const TripRoutes = require('./route/Trip')
 
 const app = express()
 
@@ -13,6 +17,15 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 
 
+//Routes
+app.use('/User', UserRoutes)
+app.use('/Vehicle', VehicleRoutes)
+app.use('/Seat', SeatRoutes)
+app.use('/Route', RouteRoutess)
+app.use('/Trip', TripRoutes)
+
+
+//Connection String
 mongoose.connect(process.env.MONGO_URI)
 .then(() =>{
     app.listen(process.env.PORT, () => {
@@ -21,3 +34,5 @@ mongoose.connect(process.env.MONGO_URI)
 }).catch((error) => {
     console.log(error)
 })
+
+
