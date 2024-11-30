@@ -28,11 +28,10 @@ const getRandomVehicle = async (vtype) => {
 };
 
 
-
 const getRoute = async (origins, destinations, departure_time) => {
-    const timeBuffer = 300;
+    const timeBuffer = 18000;
 
-    const routes = await RRoute.find({
+    const trips = await Trip.find({
         origins: { $regex: new RegExp(origins, 'i') },
         destinations: { $regex: new RegExp(destinations, 'i') },
         departure_time: { 
@@ -41,15 +40,32 @@ const getRoute = async (origins, destinations, departure_time) => {
         },
     });
 
-    return routes;
+    console.log(trips)
+    return trips;
 };
 
-
-
 const getAllTrips = async (req, res) => {
-    const {origins, destinations} = req.body 
+    const trips = await Trip.find({})
+
+    res.status(200).json(trips)
+}
+
+const getSingleRoute = async (id) => {
+    const routes = await RRoute.findById({_id: id})
+    return routes;
+}
+
+const getSpecTrips = async (req, res) => {
+    const {origins, destinations, departure_time} = req.body 
     try{
-        const routes = await getRoute(origins, destinations);
+
+        const departureTimeUnix = departure_time
+            ? Math.floor(new Date(departure_time).getTime() / 1000) 
+            : Math.floor(Date.now() / 1000);
+        
+        console.log(departureTimeUnix)
+
+        const routes = await getRoute(origins, destinations, departureTimeUnix);
         
         res.status(200).json({routes})
     } catch (err) {
@@ -66,6 +82,7 @@ const createTrip = async (req, res) => {
             throw new Error("RouteID and Vehicle type are required");
         }
 
+        const nRoute = await getSingleRoute(RouteID);
         const type = await getRandomVehicle(vtype);
         console.log("this is the type",type)
 
@@ -77,6 +94,11 @@ const createTrip = async (req, res) => {
         const trip = await Trip.create({
             RouteID,
             VehicleID: type._id,
+            vehType: type.VType,
+            vehName: type.VName,
+            origins: nRoute.origins,
+            destinations: nRoute.destinations,
+            duration: nRoute.duration,
             departure_time: departureTimeUnix,
         });
 
@@ -90,4 +112,4 @@ const createTrip = async (req, res) => {
 
   
 
-module.exports = {getAllTrips, createTrip}
+module.exports = {getAllTrips, createTrip, getSpecTrips}

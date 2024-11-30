@@ -12,6 +12,14 @@ const TripSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'vehicles'
     },
+    vehType:{
+        type: String,
+        required: true
+    },
+    vehName:{
+        type: String,
+        required: true
+    },
     origins : {
         type: String,
         required: true
