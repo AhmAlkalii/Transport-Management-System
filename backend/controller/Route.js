@@ -1,7 +1,9 @@
 const RRoute = require("../model/Route")
 const axios = require("axios")
 
-const createRoute = async (req, res) => {
+
+//If mode of transport and departure time not specifed 
+const createRouteBaseFunc = async (req, res) => {
     const {origins, destinations } = req.body;
     const params = {
         origins,
@@ -39,6 +41,50 @@ const createRoute = async (req, res) => {
 }
 
 
+const createRouteExpanded = async (req, res) => {
+    const {origins, destinations, departure_time } = req.body;
+
+    //Tell frontend to convert the departuretime to utc before sending
+    // const unixTimestamp = Math.floor(new Date(isoDate).getTime() / 1000);
+
+    const params = {
+        origins,
+        destinations,
+        departure_time,
+        key : process.env.Distance_KEY
+    }
+
+    try{
+
+        if(!origins || !destinations || !departure_time){
+            throw new Error("Please check all feilds")
+        }
+
+
+        const response  = await axios.get('https://api.distancematrix.ai/maps/api/distancematrix/json', { params });
+        const distance = response.data.rows[0].elements[0].distance.text;
+        const duration = response.data.rows[0].elements[0].duration.text;
+        
+
+        console.log('Distance:', distance);  
+        console.log('Duration:', duration); 
+        if(!distance || !duration){
+            throw new Error("No distance or duration check api")
+        }
+        
+
+        const route = await RRoute.create({origins, destinations, duration, distance})
+
+        console.log(response.data)
+        return res.status(200).json(response.data); 
+
+    }
+    catch(err){
+        res.status(400).json({err: err.message})
+    }
+}
+
+
 
 const getAllRoutes = async (req, res) => {
     const routes = await RRoute.find({}).sort({createdAt: -1})
@@ -67,4 +113,4 @@ const deleteRoute  = async(req, res) => {
 }
 
 
-module.exports = {createRoute, getAllRoutes, deleteRoute,getSingle}
+module.exports = {createRouteBaseFunc, createRouteExpanded, getAllRoutes, deleteRoute,getSingle}

@@ -7,7 +7,7 @@ const UserRoutes = require("./route/User")
 const VehicleRoutes = require("./route/Vehicle")
 const SeatRoutes = require("./route/Seat")
 const RouteRoutess = require("./route/Route")
-
+const TripRoutes = require('./route/Trip')
 
 const app = express()
 
@@ -22,6 +22,7 @@ app.use('/User', UserRoutes)
 app.use('/Vehicle', VehicleRoutes)
 app.use('/Seat', SeatRoutes)
 app.use('/Route', RouteRoutess)
+app.use('/Trip', TripRoutes)
 
 
 //Connection String
