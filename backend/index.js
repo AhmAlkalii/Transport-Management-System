@@ -8,6 +8,9 @@ const VehicleRoutes = require("./route/Vehicle")
 const SeatRoutes = require("./route/Seat")
 const RouteRoutess = require("./route/Route")
 const TripRoutes = require('./route/Trip')
+const PaymentRoutes = require('./route/Payment')
+const StripeRoutes = require('./routes/stripe')
+
 
 const app = express()
 
@@ -23,6 +26,8 @@ app.use('/Vehicle', VehicleRoutes)
 app.use('/Seat', SeatRoutes)
 app.use('/Route', RouteRoutess)
 app.use('/Trip', TripRoutes)
+app.use('/Payment', PaymentRoutes)
+app.use('/Stripe',StripeRoutes);
 
 
 //Connection String

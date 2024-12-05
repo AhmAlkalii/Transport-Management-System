@@ -24,11 +24,11 @@ const getUser = async (req, res) => {
 
 
 const createUser = async (req, res) => {
-    const {Name, Email, PNumber, Password, Role, PaymentMethods} = req.body
+    const {Name, Email, PNumber, Password, Role} = req.body
 
     try{
 
-        const user = await User.Signup(Name, Email, PNumber, Password, Role, PaymentMethods)
+        const user = await User.Signup(Name, Email, PNumber, Password, Role)
         const token = await createToken(user._id)
 
         res.status(200).json({user, token})
@@ -36,7 +36,6 @@ const createUser = async (req, res) => {
     }
     catch(err){
         res.status(400).json({err: err.message})
-
     }
 }
 
