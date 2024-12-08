@@ -62,9 +62,12 @@ const getSpecTrips = async (req, res) => {
     const {origins, destinations, departure_time} = req.body 
     try{
 
-        const departureTimeUnix = departure_time
-            ? Math.floor(new Date(departure_time).getTime() / 1000) 
-            : Math.floor(Date.now() / 1000);
+        const departureTimeUnix =
+            departure_time === "now"
+                ? Math.floor(Date.now() / 1000)
+                : departure_time
+                ? Math.floor(new Date(departure_time).getTime() / 1000)
+                : Math.floor(Date.now() / 1000);
         
         console.log(departureTimeUnix)
 
@@ -92,9 +95,12 @@ const createTrip = async (req, res) => {
         const theVehicleType = await getRandomVehicle(vtype);
         console.log("this is the type",theVehicleType)
 
-        const departureTimeUnix = departure_time
-            ? Math.floor(new Date(departure_time).getTime() / 1000) 
-            : Math.floor(Date.now() / 1000);
+        const departureTimeUnix =
+            departure_time === "now"
+                ? Math.floor(Date.now() / 1000)
+                : departure_time
+                ? Math.floor(new Date(departure_time).getTime() / 1000)
+                : Math.floor(Date.now() / 1000);
 
        
         const trip = await Trip.create({

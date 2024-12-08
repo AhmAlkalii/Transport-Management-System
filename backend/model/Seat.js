@@ -27,62 +27,71 @@ const SeatSchema = new Schema({
     
 SeatSchema.statics.CreateSeat = async function (VehicleID, SeatNumber, SeatClass) {
     // Validate inputs
-    if (!VehicleID || !SeatNumber || !SeatClass) {
-        throw Error("One or More Fields are incomplete.👎");
-    }
+    if (!VehicleID || !SeatClass || !SeatNumber || !Array.isArray(SeatNumber)) {
+        throw Error("Fields are incomplete.👎");
+      }
     
-    if (!sNumbers.includes(SeatNumber)) {
-        throw Error("Seat does not exist.👎");
-    }
+      if (!classes.includes(SeatClass)) {
+        throw Error("Invalid SeatClass.👎");
+      }
     
-    if (!classes.includes(SeatClass)) {
-        throw Error("Class does not exist.👎");
-    }
+      for (let seat of SeatNumber) {
+        if (!sNumbers.includes(seat)) {
+          throw Error(`SeatNumber ${seat} is invalid.👎`);
+        }
+        const existingSeat = await this.findOne({ VehicleID, SeatNumber: seat });
+        if (existingSeat) {
+          throw Error(`SeatNumber ${seat} is already taken!👎`);
+        }
+      }
     
-    const checkSeat = await this.findOne({ VehicleID, SeatNumber });
-    if (checkSeat) {
-        throw Error("Seat is already taken! Please select another.👎");
-    }
+      const createdSeats = [];
+      for (let seat of SeatNumber) {
+        const newSeat = await this.create({ VehicleID, SeatNumber: seat, SeatClass });
+        createdSeats.push(newSeat);
+      }
     
-    const seat = await this.create({ VehicleID, SeatNumber, SeatClass });
-    return seat;
+    return createdSeats;
 };
 
  
 
-SeatSchema.statics.upDateSeat = async function (VehicleID, SeatNumber, SeatClass) {
-    const filter = { VehicleID }; 
-    const update = {};
-  
-    
-    if (SeatNumber && !sNumbers.includes(SeatNumber)) {
-      throw Error("Seat does not exist.👎");
+SeatSchema.statics.updateSeats = async function (VehicleID, SeatNumber, SeatClass) {
+    // Validate inputs
+    if (!VehicleID || !SeatNumber || !Array.isArray(SeatNumber) || !SeatClass) {
+      throw Error("Fields are incomplete.👎");
     }
   
-
-    if (SeatClass && !classes.includes(SeatClass)) {
+    if (!classes.includes(SeatClass)) {
       throw Error("Class does not exist.👎");
     }
   
-  
-    if (SeatNumber) update.SeatNumber = SeatNumber;
-    if (SeatClass) update.SeatClass = SeatClass;
-  
-
-    if (Object.keys(update).length === 0) {
-      throw Error("No updates provided.👎");
+    for (let seat of SeatNumber) {
+      if (!sNumbers.includes(seat)) {
+        throw Error(`SeatNumber ${seat} is invalid.👎`);
+      }
     }
   
-
-    const seat = await this.findOneAndUpdate(filter, update, { new: true });
-  
-
-    if (!seat) {
-      throw Error("Seat not found or update failed.👎");
+    // Check if seats exist
+    const existingSeats = await this.find({ VehicleID, SeatNumber: { $in: SeatNumber } });
+    if (existingSeats.length !== SeatNumber.length) {
+      throw Error("One or more seats do not exist or are not found in this vehicle.👎");
     }
   
-    return seat;
-};
+    // Update each seat
+    const updatedSeats = [];
+    for (let seatNumber of SeatNumber) {
+      const updatedSeat = await this.findOneAndUpdate(
+        { VehicleID, SeatNumber: seatNumber },
+        { SeatClass },
+        { new: true }
+      );
+      updatedSeats.push(updatedSeat);
+    }
+  
+    return updatedSeats;
+  };
+  
   
   
 
