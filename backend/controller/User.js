@@ -56,9 +56,10 @@ const userLogin = async(req, res) => {
 
 const updateUser = async(req, res) => {
 
+    const { id } = req.params;
     const {Name, Email, PNumber, Password, Role, PaymentMethods} = req.body
 
-    const filter = {Email : Email}
+    const filter = {_id: id}
     const update = {}
     try{
 
@@ -73,8 +74,8 @@ const updateUser = async(req, res) => {
         if(Name) update.Name = Name
         if(PNumber) update.PNumber = PNumber
         if(Role) update.Role = Role
-        if(PNumber) update.PNumber = PNumber
-        if(PNumber) update.PaymentMethods = PaymentMethods
+        if(PaymentMethods) update.PaymentMethods = PaymentMethods
+        if(Email) update.Email = Email
 
         if(Password){
             const salt = await bcrypt.genSalt(10)
