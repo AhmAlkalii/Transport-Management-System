@@ -1,6 +1,9 @@
 const Trip = require("../model/Trip")
 const Vehicle = require('../model/Vehicle')
 const RRoute = require('../model/Route')
+const Seat = require("../model/Seat")
+const Payment = require('../model/Payment')
+const Booking = require("../model/Booking")
 
 
 
@@ -73,8 +76,11 @@ const getSpecTrips = async (req, res) => {
     }
 }
 
+
+
 const createTrip = async (req, res) => {
-    const { RouteID, vtype, departure_time } = req.body;
+    const { RouteID, vtype, departure_time, UserID,  SeatNumber,
+         SeatClass, Amount, PaymentMethod } = req.body;
 
     try {
         
@@ -83,8 +89,8 @@ const createTrip = async (req, res) => {
         }
 
         const nRoute = await getSingleRoute(RouteID);
-        const type = await getRandomVehicle(vtype);
-        console.log("this is the type",type)
+        const theVehicleType = await getRandomVehicle(vtype);
+        console.log("this is the type",theVehicleType)
 
         const departureTimeUnix = departure_time
             ? Math.floor(new Date(departure_time).getTime() / 1000) 
@@ -93,15 +99,25 @@ const createTrip = async (req, res) => {
        
         const trip = await Trip.create({
             RouteID,
-            VehicleID: type._id,
-            vehType: type.VType,
-            vehName: type.VName,
+            VehicleID: theVehicleType._id,
+            vehType: theVehicleType.VType,
+            vehName: theVehicleType.VName,
             origins: nRoute.origins,
             destinations: nRoute.destinations,
             duration: nRoute.duration,
             departure_time: departureTimeUnix,
         });
 
+        const seat = await Seat.CreateSeat(trip.VehicleID, SeatNumber, SeatClass)
+        const payment = await Payment.MakePayment(UserID, Amount, PaymentMethod)
+
+        const booking = await Booking.CreateBooking(
+            UserID, trip._id, seat._id, payment._id, trip.vehType, trip.vehName,
+            trip.origins, trip.destinations, trip.duration, SeatNumber, SeatClass
+        )
+
+        console.log(booking)
+        
         res.status(201).json({ message: "Trip created successfully", trip });
     } catch (err) {
         console.error(err);

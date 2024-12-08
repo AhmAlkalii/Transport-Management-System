@@ -9,8 +9,8 @@ const SeatRoutes = require("./route/Seat")
 const RouteRoutess = require("./route/Route")
 const TripRoutes = require('./route/Trip')
 const PaymentRoutes = require('./route/Payment')
-const StripeRoutes = require('./routes/stripe')
-
+const StripeRoutes = require('./route/stripe')
+const BookingRoutes = require('./route/Booking')
 
 const app = express()
 
@@ -28,6 +28,7 @@ app.use('/Route', RouteRoutess)
 app.use('/Trip', TripRoutes)
 app.use('/Payment', PaymentRoutes)
 app.use('/Stripe',StripeRoutes);
+app.use('/Booking',BookingRoutes);
 
 
 //Connection String
@@ -36,6 +37,7 @@ mongoose.connect(process.env.MONGO_URI)
     app.listen(process.env.PORT, () => {
         console.log(`App running on`,process.env.PORT, `and Connect To MongoDB`)
     })
+    
 }).catch((error) => {
     console.log(error)
 })
