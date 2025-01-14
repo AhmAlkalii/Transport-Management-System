@@ -37,7 +37,7 @@ const updateSeat = async(req, res) => {
     
     try{
         
-        const update = await Seat.upDateSeat(VehicleID, SeatNumber, SeatClass)
+        const update = await Seat.updateSeats(VehicleID, SeatNumber, SeatClass)
 
         res.status(200).json({update})
     }

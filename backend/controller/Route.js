@@ -3,42 +3,42 @@ const axios = require("axios")
 
 
 //If mode of transport and departure time not specifed 
-const createRouteBaseFunc = async (req, res) => {
-    const {origins, destinations } = req.body;
-    const params = {
-        origins,
-        destinations,
-        key : process.env.Distance_KEY
-    }
+// const createRouteBaseFunc = async (req, res) => {
+//     const {origins, destinations } = req.body;
+//     const params = {
+//         origins,
+//         destinations,
+//         key : process.env.Distance_KEY
+//     }
 
-    try{
+//     try{
 
-        if(!origins || !destinations ||!params){
-            throw new Error("Please check all feilds")
-        }
+//         if(!origins || !destinations ||!params){
+//             throw new Error("Please check all feilds")
+//         }
 
 
-        const response  = await axios.get('https://api.distancematrix.ai/maps/api/distancematrix/json', { params });
-        const distance = response.data.rows[0].elements[0].distance.text;
-        const duration = response.data.rows[0].elements[0].duration.text;
+//         const response  = await axios.get('https://api.distancematrix.ai/maps/api/distancematrix/json', { params });
+//         const distance = response.data.rows[0].elements[0].distance.text;
+//         const duration = response.data.rows[0].elements[0].duration.text;
         
 
-        console.log('Distance:', distance);  
-        console.log('Duration:', duration); 
-        if(!distance || !duration){
-            throw new Error("No distance or duration check api")
-        }
+//         console.log('Distance:', distance);  
+//         console.log('Duration:', duration); 
+//         if(!distance || !duration){
+//             throw new Error("No distance or duration check api")
+//         }
         
 
-        const route = await RRoute.create({origins, destinations, duration, distance})
+//         const route = await RRoute.create({origins, destinations, duration, distance})
 
-        return res.status(200).json(response.data); 
+//         return res.status(200).json(response.data); 
 
-    }
-    catch(err){
-        res.status(400).json({err: err.message})
-    }
-}
+//     }
+//     catch(err){
+//         res.status(400).json({err: err.message})
+//     }
+// }
 
 
 const createRouteExpanded = async (req, res) => {
@@ -113,4 +113,4 @@ const deleteRoute  = async(req, res) => {
 }
 
 
-module.exports = {createRouteBaseFunc, createRouteExpanded, getAllRoutes, deleteRoute,getSingle}
+module.exports = { createRouteExpanded, getAllRoutes, deleteRoute,getSingle}

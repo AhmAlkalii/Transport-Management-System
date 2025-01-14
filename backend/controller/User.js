@@ -24,11 +24,11 @@ const getUser = async (req, res) => {
 
 
 const createUser = async (req, res) => {
-    const {Name, Email, PNumber, Password, Role, PaymentMethods} = req.body
+    const {Name, Email, PNumber, Password, Role} = req.body
 
     try{
-
-        const user = await User.Signup(Name, Email, PNumber, Password, Role, PaymentMethods)
+        
+        const user = await User.Signup(Name, Email, PNumber, Password, Role)
         const token = await createToken(user._id)
 
         res.status(200).json({user, token})
@@ -36,7 +36,6 @@ const createUser = async (req, res) => {
     }
     catch(err){
         res.status(400).json({err: err.message})
-
     }
 }
 
@@ -47,7 +46,7 @@ const userLogin = async(req, res) => {
         const user = await User.Login(Email, Password)
         const token = await createToken(user._id)
 
-        res.status(200).json({user})
+        res.status(200).json({user, token})
     }
     catch(err){
         res.status(400).json({err: err.message})
@@ -57,9 +56,10 @@ const userLogin = async(req, res) => {
 
 const updateUser = async(req, res) => {
 
+    const { id } = req.params;
     const {Name, Email, PNumber, Password, Role, PaymentMethods} = req.body
 
-    const filter = {Email : Email}
+    const filter = {_id: id}
     const update = {}
     try{
 
@@ -74,8 +74,8 @@ const updateUser = async(req, res) => {
         if(Name) update.Name = Name
         if(PNumber) update.PNumber = PNumber
         if(Role) update.Role = Role
-        if(PNumber) update.PNumber = PNumber
-        if(PNumber) update.PaymentMethods = PaymentMethods
+        if(PaymentMethods) update.PaymentMethods = PaymentMethods
+        if(Email) update.Email = Email
 
         if(Password){
             const salt = await bcrypt.genSalt(10)

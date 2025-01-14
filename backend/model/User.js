@@ -5,7 +5,6 @@ const validator = require('validator')
 
 const Schema = mongoose.Schema
 
-const paymentMethods =  ['Visa', 'MasterCard', 'PayPal', 'Blik']
 
 const UserSchema = new Schema({
     Name:{
@@ -29,26 +28,17 @@ const UserSchema = new Schema({
         type: String,
         enum: ['User', 'Admin'],
         default: 'User'
-    },
-    PaymentMethods:{
-        type: String,
-        enum: paymentMethods,
-        required: true
     }
 },{timestamps: true})
 
 
-UserSchema.statics.Signup = async function(Name, Email, PNumber, Password, Role, PaymentMethods){
-    if(!Name || !Email || !PNumber || !Password || !PaymentMethods){
+UserSchema.statics.Signup = async function(Name, Email, PNumber, Password, Role){
+    if(!Name || !Email || !PNumber || !Password ){
         throw Error("All Fields must be filled in!!")
     }
     
     if(!validator.isEmail(Email)){
         throw Error("Email is not valid")
-    }
-
-    if(!paymentMethods.includes(PaymentMethods)){
-        throw Error("Payment Method does not exist")
     }
 
     if(!validator.isStrongPassword(Password)){
@@ -64,7 +54,7 @@ UserSchema.statics.Signup = async function(Name, Email, PNumber, Password, Role,
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(Password, salt)
 
-    const user = await this.create({Name, Email, PNumber, Password : hash, Role, PaymentMethods})
+    const user = await this.create({Name, Email, PNumber, Password : hash, Role})
     return user
 
 }
