@@ -31,3 +31,34 @@ body {
 .nav-link:hover {
   text-decoration: underline; 
 }
+
+.hero {
+  text-align: center;
+  padding: 50px 20px;
+  background-color: #f4f4f4;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px; 
+  height: calc(100vh - 60px); 
+  width: 100vw;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.hero-button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease; 
+}
+
+.hero-button:hover {
+  background-color: #45a049; 
+}
