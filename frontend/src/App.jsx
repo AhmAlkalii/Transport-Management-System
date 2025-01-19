@@ -7,6 +7,7 @@ import Features from './components/Features';
 import Footer from './components/Footer';
 import About from './components/About';
 import NotFound from './components/NotFound';
+import Auth from './components/Auth';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
             </>
           } />
           <Route path="/about" element={<About />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
