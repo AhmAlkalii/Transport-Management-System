@@ -6,6 +6,7 @@ import HeroSection from './components/HeroSection';
 import Features from './components/Features';
 import Footer from './components/Footer';
 import About from './components/About';
+import NotFound from './components/NotFound';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
             </>
           } />
           <Route path="/about" element={<About />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
       </div>
