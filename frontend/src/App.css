@@ -62,3 +62,27 @@ body {
 .hero-button:hover {
   background-color: #45a049; 
 }
+
+.features {
+  padding: 20px;
+}
+
+.feature-cards {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  justify-content: center; /* Center the cards */
+  gap: 20px; /* Add spacing between cards */
+  padding: 20px 0;
+}
+
+.feature-card {
+  background-color: #fff;
+  color: black;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  width: 100%; /* Make it flexible for responsiveness */
+  max-width: 250px; /* Limit maximum width */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
