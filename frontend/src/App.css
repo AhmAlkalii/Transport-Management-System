@@ -86,3 +86,11 @@ body {
   max-width: 250px; /* Limit maximum width */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+.footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  margin-top: 20px;
+}
