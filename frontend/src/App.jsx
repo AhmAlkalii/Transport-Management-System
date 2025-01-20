@@ -9,6 +9,7 @@ import About from './components/About';
 import NotFound from './components/NotFound';
 import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
+import TripDetails from './components/TripDetails';
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
             element={<AuthRedirectWrapper />}
           />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/trip-details/:tripId" element={<TripDetails />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
