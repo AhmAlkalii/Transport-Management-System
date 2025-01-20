@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
@@ -8,6 +8,7 @@ import Footer from './components/Footer';
 import About from './components/About';
 import NotFound from './components/NotFound';
 import Auth from './components/Auth';
+import Dashboard from './components/Dashboard';
 
 const App = () => {
   return (
@@ -15,20 +16,37 @@ const App = () => {
       <div>
         <Header />
         <Routes>
-          <Route path="/" element={
-            <>
-              <HeroSection />
-              <Features />
-            </>
-          } />
+          <Route
+            path="/"
+            element={
+              <>
+                <HeroSection />
+                <Features />
+              </>
+            }
+          />
           <Route path="/about" element={<About />} />
-          <Route path="/auth" element={<Auth />} />
+          <Route
+            path="/auth"
+            element={<AuthRedirectWrapper />}
+          />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
       </div>
     </Router>
   );
+};
+
+const AuthRedirectWrapper = () => {
+  const navigate = useNavigate();
+
+  const handleAuthSuccess = () => {
+    navigate('/dashboard');
+  };
+
+  return <Auth onAuthSuccess={handleAuthSuccess} />;
 };
 
 export default App;

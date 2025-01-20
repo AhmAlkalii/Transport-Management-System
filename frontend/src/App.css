@@ -182,3 +182,92 @@ body {
   cursor: pointer;
   text-decoration: underline;
 }
+
+.dashboard {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.search-form {
+  display: flex;
+  flex-wrap: wrap; /* Ensures responsiveness for smaller screens */
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-form input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  flex: 1;
+  min-width: 200px; /* Prevents input from being too narrow */
+}
+
+.search-form button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap; /* Prevents text overflow in smaller buttons */
+  transition: background-color 0.3s ease;
+}
+
+.search-form button:hover {
+  background-color: #45a049; /* Adds hover effect for better interactivity */
+}
+
+.trip-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Auto-responsive layout */
+  gap: 20px;
+}
+
+.trip-card {
+  background-color: #fff;
+  color: #333; /* Slightly darker text for better contrast */
+  border: 1px solid #ddd;
+  border-radius: 10px; /* Rounded corners for a modern look */
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow for depth */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
+}
+
+.trip-card:hover {
+  transform: translateY(-5px); /* Lift effect on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+.trip-card h3 {
+  margin: 0 0 10px;
+  font-size: 18px; /* Slightly larger and bold font */
+  color: #4CAF50; /* Accent color for titles */
+}
+
+.trip-card p {
+  margin: 5px 0;
+  line-height: 1.5; /* Better readability */
+}
+
+@media (max-width: 768px) {
+  .search-form {
+    flex-direction: column; /* Stacks input and button for narrow screens */
+  }
+
+  .search-form input {
+    width: 100%;
+  }
+
+  .search-form button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .trip-card {
+    padding: 15px; /* Slightly smaller padding on mobile */
+  }
+}
+
