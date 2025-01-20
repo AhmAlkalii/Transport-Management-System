@@ -10,6 +10,7 @@ import NotFound from './components/NotFound';
 import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
 import TripDetails from './components/TripDetails';
+import PaymentComponent from './components/PaymentComponent'; // Import PaymentComponent
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
           />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/trip-details/:tripId" element={<TripDetails />} />
+          <Route path="/payment/:tripId" element={<PaymentComponent />} /> {/* Add this route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />

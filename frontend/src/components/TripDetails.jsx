@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const TripDetails = () => {
   const { tripId } = useParams();
+  const navigate = useNavigate();
   const [trip, setTrip] = useState(null);
   const [seats, setSeats] = useState([]);
   const [selectedSeat, setSelectedSeat] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -15,6 +17,7 @@ const TripDetails = () => {
     fetchSeats();
   }, [tripId]);
 
+  // Fetch trip details from the backend
   const fetchTripDetails = async () => {
     try {
       const response = await axios.get(`http://localhost:4000/Trip/${tripId}`);
@@ -24,6 +27,7 @@ const TripDetails = () => {
     }
   };
 
+  // Fetch seat availability for the trip
   const fetchSeats = async () => {
     try {
       const response = await axios.get(
@@ -38,6 +42,7 @@ const TripDetails = () => {
   const handleSeatSelection = (seat) => {
     setSelectedSeat(seat);
     setErrorMessage("");
+    setSuccessMessage("");
   };
 
   const handleConfirmSeat = async () => {
@@ -46,18 +51,30 @@ const TripDetails = () => {
       return;
     }
 
-    try {
-      const response = await axios.post("http://localhost:4000/api/seats/create", {
-        VehicleID: tripId,
-        SeatNumber: [selectedSeat.SeatNumber],
-        SeatClass: selectedSeat.SeatClass,
-      });
-      setSuccessMessage(`Seat ${selectedSeat.SeatNumber} booked successfully!`);
-      setSelectedSeat(null);
-      fetchSeats(); // Refresh seat availability
-    } catch (error) {
-      console.error("Error booking seat:", error);
-      setErrorMessage("Failed to book the seat. Please try again.");
+    if (!paymentMethod) {
+      setErrorMessage("Please select a payment method.");
+      return;
+    }
+
+    if (paymentMethod === "Stripe") {
+      navigate(`/payment/${tripId}`); // Redirect to the Stripe payment page
+    } else {
+      try {
+        const response = await axios.post(
+          "http://localhost:4000/api/seats/create",
+          {
+            VehicleID: tripId,
+            SeatNumber: [selectedSeat.SeatNumber],
+            SeatClass: selectedSeat.SeatClass,
+          }
+        );
+        setSuccessMessage(`Seat ${selectedSeat.SeatNumber} booked successfully!`);
+        setErrorMessage("");
+        fetchSeats(); // Refresh seat availability
+      } catch (error) {
+        console.error("Error booking seat:", error);
+        setErrorMessage("Failed to book the seat. Please try again.");
+      }
     }
   };
 
@@ -104,7 +121,34 @@ const TripDetails = () => {
           </button>
         ))}
       </div>
-      <button onClick={handleConfirmSeat}>Confirm Seat</button>
+
+      {selectedSeat && (
+        <>
+          <h3>
+            Selected Seat: {selectedSeat.SeatNumber} ({selectedSeat.SeatClass})
+          </h3>
+          <h3>
+            Payment Amount:{" "}
+            {selectedSeat.SeatClass === "Economy" ? "$10" : "$40"}
+          </h3>
+          <div>
+            <label htmlFor="paymentMethod">Select Payment Method:</label>
+            <select
+              id="paymentMethod"
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            >
+              <option value="">--Select Payment Method--</option>
+              <option value="Visa">Visa</option>
+              <option value="MasterCard">MasterCard</option>
+              <option value="PayPal">PayPal</option>
+              <option value="Blik">Blik</option>
+              <option value="Stripe">Stripe</option>
+            </select>
+          </div>
+          <button onClick={handleConfirmSeat}>Confirm Seat</button>
+        </>
+      )}
     </div>
   );
 };
