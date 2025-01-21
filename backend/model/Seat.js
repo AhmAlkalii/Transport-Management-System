@@ -26,33 +26,34 @@ const SeatSchema = new Schema({
 
     
 SeatSchema.statics.CreateSeat = async function (VehicleID, SeatNumber, SeatClass) {
-    // Validate inputs
-    if (!VehicleID || !SeatClass || !SeatNumber || !Array.isArray(SeatNumber)) {
-        throw Error("Fields are incomplete.👎");
-      }
-    
-      if (!classes.includes(SeatClass)) {
-        throw Error("Invalid SeatClass.👎");
-      }
-    
-      for (let seat of SeatNumber) {
-        if (!sNumbers.includes(seat)) {
-          throw Error(`SeatNumber ${seat} is invalid.👎`);
-        }
-        const existingSeat = await this.findOne({ VehicleID, SeatNumber: seat });
-        if (existingSeat) {
-          throw Error(`SeatNumber ${seat} is already taken!👎`);
-        }
-      }
-    
-      const createdSeats = [];
-      for (let seat of SeatNumber) {
-        const newSeat = await this.create({ VehicleID, SeatNumber: seat, SeatClass });
-        createdSeats.push(newSeat);
-      }
-    
-    return createdSeats;
+  if (!VehicleID || !SeatClass || !SeatNumber || !Array.isArray(SeatNumber)) {
+    throw Error("Fields are incomplete.👎");
+  }
+
+  if (!classes.includes(SeatClass)) {
+    throw Error("Invalid SeatClass.👎");
+  }
+
+  for (let seat of SeatNumber) {
+    if (!sNumbers.includes(seat)) {
+      throw Error(`SeatNumber ${seat} is invalid.👎`);
+    }
+
+    const existingSeat = await this.findOne({ VehicleID, SeatNumber: seat, SeatClass });
+    if (existingSeat) {
+      throw Error(`SeatNumber ${seat} in ${SeatClass} class is already taken!👎`);
+    }
+  }
+
+  const createdSeats = [];
+  for (let seat of SeatNumber) {
+    const newSeat = await this.create({ VehicleID, SeatNumber: seat, SeatClass });
+    createdSeats.push(newSeat);
+  }
+
+  return createdSeats;
 };
+
 
  
 

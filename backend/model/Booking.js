@@ -16,10 +16,6 @@ const BookingSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'seats'
     },
-    PaymentID:{
-        type: Schema.Types.ObjectId,
-        ref: 'payments'
-    },
     vehType:{
         type: String,
         required: true
@@ -54,23 +50,31 @@ const BookingSchema = new Schema({
 //He can get the booking date by accessing the createdAt
 
 
-BookingSchema.statics.CreateBooking = async function (UserID, TripID, SeatID, PaymentID, vehType, vehName, 
-origins, destinations, duration, SeatNumber, SeatClass) 
-{
-    if( !UserID|| !TripID|| !SeatID|| !PaymentID|| !vehType|| !vehName||
-        !origins|| !destinations|| !duration|| !SeatNumber|| !SeatClass)
-    {
-        throw Error("All fields need to be filled in!!")
-    }
-
+BookingSchema.statics.CreateBooking = async function (
+    UserID, TripID, SeatID, vehType, vehName,
+    origins, destinations, duration, SeatNumber, SeatClass
+  ) {
+    
+  
+    if (!UserID) throw Error("UserID is missing");
+    if (!TripID) throw Error("TripID is missing");
+    if (!SeatID) throw Error("SeatID is missing");
+    if (!vehType) throw Error("Vehicle type is missing");
+    if (!vehName) throw Error("Vehicle name is missing");
+    if (!origins) throw Error("Origin is missing");
+    if (!destinations) throw Error("Destination is missing");
+    if (!duration) throw Error("Duration is missing");
+    if (!SeatNumber) throw Error("Seat number is missing");
+    if (!SeatClass) throw Error("Seat class is missing");
+  
     const booking = await this.create({
-        UserID, TripID, SeatID, PaymentID, vehType, vehName, 
-        origins, destinations, duration, SeatNumber, SeatClass
-    })
-
+      UserID, TripID, SeatID, vehType, vehName,
+      origins, destinations, duration, SeatNumber, SeatClass
+    });
+  
     return booking;
-}
-
+  };
+  
 
 
 module.exports = mongoose.model("Booking", BookingSchema)

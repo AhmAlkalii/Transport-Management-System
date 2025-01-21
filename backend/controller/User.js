@@ -24,34 +24,30 @@ const getUser = async (req, res) => {
 
 
 const createUser = async (req, res) => {
-    const {Name, Email, PNumber, Password, Role} = req.body
-
-    try{
-        
-        const user = await User.Signup(Name, Email, PNumber, Password, Role)
-        const token = await createToken(user._id)
-
-        res.status(200).json({user, token})
-
+    const { Name, Email, PNumber, Password, Role } = req.body;
+  
+    try {
+      const user = await User.Signup(Name, Email, PNumber, Password, Role);
+      const token = await createToken(user._id);
+      res.status(200).json({ user, token });
+    } catch (err) {
+      res.status(400).json({ error: err.message }); // Updated to use 'error' key
     }
-    catch(err){
-        res.status(400).json({err: err.message})
-    }
-}
+  };
+  
 
-const userLogin = async(req, res) => {
-    const {Email, Password} = req.body
+const userLogin = async (req, res) => {
+    const { Email, Password } = req.body;
 
-    try{
-        const user = await User.Login(Email, Password)
-        const token = await createToken(user._id)
-
-        res.status(200).json({user, token})
+    try {
+        const user = await User.Login(Email, Password);
+        const token = await createToken(user._id);
+        res.status(200).json({ user, token });
+    } catch (err) {
+        res.status(400).json({ error: err.message }); // Updated to use 'error' key
     }
-    catch(err){
-        res.status(400).json({err: err.message})
-    }
-}
+};
+  
 
 
 const updateUser = async(req, res) => {
