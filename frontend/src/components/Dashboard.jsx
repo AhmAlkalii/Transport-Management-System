@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Dashboard = () => {
-  const [trips, setTrips] = useState([]);
+  const [routes, setRoutes] = useState([]);
   const [searchParams, setSearchParams] = useState({
     origins: "",
     destinations: "",
@@ -11,17 +11,18 @@ const Dashboard = () => {
   });
   const navigate = useNavigate();
 
+  // Fetch routes when the component mounts
   useEffect(() => {
-    fetchTrips();
+    fetchRoutes();
   }, []);
 
-  const fetchTrips = async () => {
+  const fetchRoutes = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/trips/");
-      setTrips(response.data);
+      const response = await axios.get("http://localhost:4000/api/routes/");
+      setRoutes(response.data);
     } catch (error) {
-      console.error("Error fetching trips:", error);
-      setTrips([]);
+      console.error("Error fetching routes:", error);
+      setRoutes([]);
     }
   };
 
@@ -29,13 +30,13 @@ const Dashboard = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/trips/spec",
+        "http://localhost:4000/api/routes/spec", // Assuming this endpoint exists for searching routes
         searchParams
       );
-      setTrips(response.data.routes || []);
+      setRoutes(response.data.routes || []);
     } catch (error) {
-      console.error("Error searching trips:", error);
-      setTrips([]);
+      console.error("Error searching routes:", error);
+      setRoutes([]);
     }
   };
 
@@ -47,13 +48,13 @@ const Dashboard = () => {
     });
   };
 
-  const handleTripClick = (tripId) => {
-    navigate(`/trip-details/${tripId}`);
+  const handleRouteClick = (routeId) => {
+    navigate(`/route-details/${routeId}`);
   };
 
   return (
     <div className="dashboard">
-      <h1>Trips Dashboard</h1>
+      <h1>Routes Dashboard</h1>
       <form className="search-form" onSubmit={handleSearch}>
         <input
           type="text"
@@ -78,37 +79,37 @@ const Dashboard = () => {
         />
         <button type="submit">Search</button>
       </form>
-      <div className="trip-cards">
-        {trips.length > 0 ? (
-          trips.map((trip) => (
+      <div className="route-cards">
+        {routes.length > 0 ? (
+          routes.map((route) => (
             <div
-              className="trip-card"
-              key={trip._id}
-              onClick={() => handleTripClick(trip._id)}
+              className="route-card"
+              key={route._id}
+              onClick={() => handleRouteClick(route._id)}
             >
-              <h3>{trip.vehName}</h3>
+              <h3>{route.vehicleName}</h3>
               <p>
-                <strong>Type:</strong> {trip.vehType}
+                <strong>Origin:</strong> {route.origin}
               </p>
               <p>
-                <strong>Origin:</strong> {trip.origins}
+                <strong>Destination:</strong> {route.destination}
               </p>
               <p>
-                <strong>Destination:</strong> {trip.destinations}
+                <strong>Duration:</strong> {route.duration}
               </p>
               <p>
-                <strong>Duration:</strong> {trip.duration}
+                <strong>Distance:</strong> {route.distance}
               </p>
               <p>
                 <strong>Departure:</strong>{" "}
-                {trip.departure_time === "now"
+                {route.departure_time === "now"
                   ? "Now"
-                  : new Date(trip.departure_time * 1000).toLocaleString()}
+                  : new Date(route.departure_time * 1000).toLocaleString()}
               </p>
             </div>
           ))
         ) : (
-          <p>No trips available. Try adjusting your search criteria.</p>
+          <p>No routes available. Try adjusting your search criteria.</p>
         )}
       </div>
     </div>
