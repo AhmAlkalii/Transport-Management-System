@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { PopupComp } from "../../stripeComponents/PopupComp";
 
 const TripDetails = () => {
   const { tripId } = useParams();
-  const navigate = useNavigate(); 
-  const { user } = useAuthContext(); 
+  const { user } = useAuthContext();
   const [trip, setTrip] = useState(null);
   const [error, setError] = useState(null);
   const [seatNumbers] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
-  const [seatClass, setSeatClass] = useState("Economy");
   const [selectedSeats, setSelectedSeats] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState("Stripe"); 
-  const [amount, setAmount] = useState("$10"); 
-
-  const allowedAmounts = ["$10", "$5", "$40"];
-  const paymentMethods = ["Visa", "MasterCard", "PayPal", "Blik", "Stripe"];
+  const [seatClass, setSeatClass] = useState("Economy");
+  const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
     const fetchTripDetails = async () => {
@@ -30,12 +26,15 @@ const TripDetails = () => {
       }
     };
 
-    if (tripId) {
-      fetchTripDetails();
-    } else {
-      setError("Trip ID is not defined.");
-    }
+    if (tripId) fetchTripDetails();
   }, [tripId]);
+
+  useEffect(() => {
+    if (trip) {
+      // Calculate the total amount based on the number of selected seats
+      setTotalAmount(selectedSeats.length * trip.amount);
+    }
+  }, [selectedSeats, trip]);
 
   const handleSeatClick = (seatNumber) => {
     if (selectedSeats.includes(seatNumber)) {
@@ -45,43 +44,38 @@ const TripDetails = () => {
     }
   };
 
-  const handleBooking = async () => {
+  const handleBuyTicket = async () => {
     try {
-      if (!selectedSeats.length) {
+      if (!trip) {
+        toast.error("Trip details not loaded.");
+        return;
+      }
+
+      if (selectedSeats.length === 0) {
         toast.error("Please select at least one seat.");
         return;
       }
-  
-      if (!amount) {
-        toast.error("Please select a valid amount.");
-        return;
-      }
-  
+
       const bookingData = {
         TripID: trip._id,
         RouteID: trip.RouteID,
-        UserID: user?.user?._id, 
+        UserID: user?.user?._id,
         SeatNumber: selectedSeats,
         SeatClass: seatClass,
-        Amount: amount,
-        PaymentMethod: paymentMethod,
+        Amount: totalAmount, // Total price for all selected seats
+        PaymentMethod: "Stripe",
       };
-  
-      console.log(bookingData)
-      // Make API call
+
       const response = await axios.post("http://localhost:4000/Trip/create", bookingData, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
-  
+
       toast.success("Booking successful!");
-      navigate("/"); // Redirect to home page
     } catch (error) {
       console.error("Error booking seats:", error.response?.data?.error || error.message);
       toast.error(error.response?.data?.error || "Booking failed. Please try again.");
     }
   };
-  
-  
 
   if (error) return <p>{error}</p>;
   if (!trip) return <p>Loading trip details...</p>;
@@ -108,7 +102,7 @@ const TripDetails = () => {
         ))}
       </div>
 
-      <div className="seat-options">
+      <div className="payment-section">
         <label htmlFor="seatClass">Class:</label>
         <select
           id="seatClass"
@@ -118,37 +112,9 @@ const TripDetails = () => {
           <option value="Economy">Economy</option>
           <option value="Business">Business</option>
         </select>
-      </div>
 
-      <div className="payment-options">
-        <label htmlFor="paymentMethod">Payment Method:</label>
-        <select
-          id="paymentMethod"
-          value={paymentMethod}
-          onChange={(e) => setPaymentMethod(e.target.value)}
-        >
-          {paymentMethods.map((method) => (
-            <option key={method} value={method}>{method}</option>
-          ))}
-        </select>
+        <PopupComp total={`$${totalAmount}`} handleBuyTicket={handleBuyTicket} />
       </div>
-
-      <div className="amount-options">
-        <label htmlFor="amount">Amount:</label>
-        <select
-          id="amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        >
-          {allowedAmounts.map((amt) => (
-            <option key={amt} value={amt}>{amt}</option>
-          ))}
-        </select>
-      </div>
-
-      <button onClick={handleBooking} disabled={selectedSeats.length === 0}>
-        Book Seats
-      </button>
     </div>
   );
 };

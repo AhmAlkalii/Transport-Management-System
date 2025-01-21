@@ -3,7 +3,6 @@ const Trip = require("../model/Trip");
 const Vehicle = require("../model/Vehicle");
 const RRoute = require("../model/Route");
 const Seat = require("../model/Seat");
-const Payment = require("../model/Payment");
 const Booking = require("../model/Booking");
 
 /**
@@ -84,41 +83,40 @@ const getSpecTrips = async (req, res) => {
   };
 
 
-const populateTrip = async (req, res) => {
+  const populateTrip = async (req, res) => {
     try {
-        const { RouteID, vtype, departure_time } = req.body;
-    
-        if (!RouteID || !vtype || !departure_time) {
-          throw new Error("RouteID, vtype, and departure_time are required");
+        const { RouteID, vtype, departure_time, amount } = req.body;
+
+        if (!RouteID || !vtype || !departure_time || !amount) {
+            throw new Error("RouteID, vtype, departure_time, and amount are required");
         }
-    
-        // Fetch route and vehicle
+
         const nRoute = await getSingleRoute(RouteID);
         if (!nRoute) throw new Error("No route found for the given RouteID");
-    
+
         const theVehicleType = await getRandomVehicle(vtype);
         if (!theVehicleType) throw new Error("No vehicle found for the given type");
-    
-        // Convert departure_time to Unix timestamp (seconds)
+
         const departureTimeUnix = Math.floor(new Date(departure_time).getTime() / 1000);
-    
-        // Create the Trip
+
         const trip = await Trip.create({
-          RouteID,
-          VehicleID: theVehicleType._id,
-          vehType: theVehicleType.VType,
-          vehName: theVehicleType.VName,
-          origins: nRoute.origins,
-          destinations: nRoute.destinations,
-          duration: nRoute.duration,
-          departure_time: departureTimeUnix,
+            RouteID,
+            VehicleID: theVehicleType._id,
+            vehType: theVehicleType.VType,
+            vehName: theVehicleType.VName,
+            origins: nRoute.origins,
+            destinations: nRoute.destinations,
+            duration: nRoute.duration,
+            departure_time: departureTimeUnix,
+            amount,
         });
-    
-        res.status(201).json({ message: "Test Trip created successfully", trip });
-      } catch (err) {
+
+        res.status(201).json({ message: "Trip created successfully", trip });
+    } catch (err) {
         res.status(400).json({ error: err.message });
     }
-}
+};
+
 
 const findTrip = async (tripId) => {
   try {
@@ -153,11 +151,11 @@ const getTripDetails = async (req, res) => {
 
 
 const createBooking = async (req, res) => {
-  const { TripID, RouteID, UserID, SeatNumber, SeatClass, Amount, PaymentMethod } = req.body;
+  const { TripID, RouteID, UserID, SeatNumber, SeatClass} = req.body;
 
   try {
     // Validate required fields
-    if (!TripID || !RouteID || !UserID || !SeatNumber || !SeatClass || !Amount || !PaymentMethod) {
+    if (!TripID || !RouteID || !UserID || !SeatNumber || !SeatClass) {
       throw new Error("All fields are required to create a booking");
     }
 
@@ -168,8 +166,7 @@ const createBooking = async (req, res) => {
       throw new Error("Invalid Trip or Route details");
     }
 
-    // Create payment
-    const payment = await Payment.MakePayment(UserID, Amount, PaymentMethod);
+   
 
     // Initialize an array to store created bookings
     const createdBookings = [];
@@ -183,14 +180,13 @@ const createBooking = async (req, res) => {
       const booking = await Booking.CreateBooking(
         UserID,
         trip._id,
-        createdSeat[0]._id, // Use the first (and only) seat created in this iteration
-        payment._id,
+        createdSeat[0]._id,
         trip.vehType,
         trip.vehName,
         trip.origins,
         trip.destinations,
         trip.duration,
-        seat, // Current seat number
+        seat, 
         SeatClass
       );
 

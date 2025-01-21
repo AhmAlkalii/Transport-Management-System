@@ -16,10 +16,6 @@ const BookingSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'seats'
     },
-    PaymentID:{
-        type: Schema.Types.ObjectId,
-        ref: 'payments'
-    },
     vehType:{
         type: String,
         required: true
@@ -55,7 +51,7 @@ const BookingSchema = new Schema({
 
 
 BookingSchema.statics.CreateBooking = async function (
-    UserID, TripID, SeatID, PaymentID, vehType, vehName,
+    UserID, TripID, SeatID, vehType, vehName,
     origins, destinations, duration, SeatNumber, SeatClass
   ) {
     
@@ -63,7 +59,6 @@ BookingSchema.statics.CreateBooking = async function (
     if (!UserID) throw Error("UserID is missing");
     if (!TripID) throw Error("TripID is missing");
     if (!SeatID) throw Error("SeatID is missing");
-    if (!PaymentID) throw Error("PaymentID is missing");
     if (!vehType) throw Error("Vehicle type is missing");
     if (!vehName) throw Error("Vehicle name is missing");
     if (!origins) throw Error("Origin is missing");
@@ -73,7 +68,7 @@ BookingSchema.statics.CreateBooking = async function (
     if (!SeatClass) throw Error("Seat class is missing");
   
     const booking = await this.create({
-      UserID, TripID, SeatID, PaymentID, vehType, vehName,
+      UserID, TripID, SeatID, vehType, vehName,
       origins, destinations, duration, SeatNumber, SeatClass
     });
   

@@ -4,39 +4,42 @@ const Schema = mongoose.Schema
 
 
 const TripSchema = new Schema({
-    RouteID:{
+    RouteID: {
         type: Schema.Types.ObjectId,
         ref: 'routes'
     },
-    VehicleID:{
+    VehicleID: {
         type: Schema.Types.ObjectId,
         ref: 'vehicles'
     },
-    vehType:{
+    vehType: {
         type: String,
         required: true
     },
-    vehName:{
+    vehName: {
         type: String,
         required: true
     },
-    origins : {
+    origins: {
         type: String,
         required: true
     },
-    destinations : {
+    destinations: {
         type: String,
         required: true
     },
-    duration : {
+    duration: {
         type: String,
         required: true
     },
-    departure_time:{
+    departure_time: {
         type: Number,
         default: 'now',
+    },
+    amount: { 
+        type: Number,
+        required: true,
     }
-}, {timestamps: true})
+}, { timestamps: true });
 
-
-module.exports = mongoose.model("Trip", TripSchema)
+module.exports = mongoose.model("Trip", TripSchema);

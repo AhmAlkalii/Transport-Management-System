@@ -24,6 +24,12 @@ const MyBookings = () => {
 
     if (user) {
       fetchBookings();
+
+      // Set up periodic refresh
+      const intervalId = setInterval(fetchBookings, 1000); // Refresh every 10 seconds
+
+      // Cleanup the interval on component unmount
+      return () => clearInterval(intervalId);
     }
   }, [user]);
 
