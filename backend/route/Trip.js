@@ -1,5 +1,5 @@
 const express = require("express")
-const { getAllTrips, createTrip, getSpecTrips } = require("../controller/Trip")
+const { getAllTrips, createBooking, getSpecTrips, populateTrip, getTripDetails } = require("../controller/Trip")
 
 
 const Router = express.Router()
@@ -8,7 +8,9 @@ const Router = express.Router()
 
 Router.get('/', getAllTrips)
 Router.get('/spec', getSpecTrips)
-Router.post('/create', createTrip)
+Router.post('/create', createBooking)
+Router.post('/populate', populateTrip)
+Router.get('/:tripId', getTripDetails);
 
 
 module.exports = Router

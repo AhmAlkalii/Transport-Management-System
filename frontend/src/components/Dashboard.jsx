@@ -1,60 +1,64 @@
-import React, { useEffect, useState } from "react";
+// Dashboard.jsx
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Dashboard = () => {
-  const [routes, setRoutes] = useState([]);
+  const [trips, setTrips] = useState([]);
+  const [useNow, setUseNow] = useState(false);
+
+  // For searching:
   const [searchParams, setSearchParams] = useState({
     origins: "",
     destinations: "",
-    departure_time: "now",
+    departure_time: "",
   });
+
   const navigate = useNavigate();
 
-  // Fetch routes when the component mounts
-  useEffect(() => {
-    fetchRoutes();
-  }, []);
-
-  const fetchRoutes = async () => {
-    try {
-      const response = await axios.get("http://localhost:4000/api/routes/");
-      setRoutes(response.data);
-    } catch (error) {
-      console.error("Error fetching routes:", error);
-      setRoutes([]);
-    }
-  };
-
+  // Handle Search
   const handleSearch = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:4000/api/routes/spec", // Assuming this endpoint exists for searching routes
-        searchParams
-      );
-      setRoutes(response.data.routes || []);
+      // Build final params
+      const finalParams = {
+        origins: searchParams.origins,
+        destinations: searchParams.destinations,
+        departure_time: useNow ? "now" : searchParams.departure_time,
+      };
+
+
+      console.log(finalParams)
+      // Make GET request with query parameters
+      const response = await axios.get("http://localhost:4000/Trip/spec", {
+        params: finalParams, // 
+      });
+
+      setTrips(response.data.routes || []);
     } catch (error) {
-      console.error("Error searching routes:", error);
-      setRoutes([]);
+      console.error("Error searching trips:", error);
+      setTrips([]);
     }
   };
 
+  // Handle Input Changes (origins, destinations, departure_time)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setSearchParams({
-      ...searchParams,
+    setSearchParams((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
-  const handleRouteClick = (routeId) => {
-    navigate(`/route-details/${routeId}`);
+  // On trip card click, navigate to details (if you have a route for that)
+  const handleTripClick = (tripId) => {
+    console.log("Trip ID:", tripId); 
+    navigate(`/trip-details/${tripId}`);
   };
 
   return (
     <div className="dashboard">
-      <h1>Routes Dashboard</h1>
+      <h1>Trips Dashboard</h1>
       <form className="search-form" onSubmit={handleSearch}>
         <input
           type="text"
@@ -63,6 +67,7 @@ const Dashboard = () => {
           value={searchParams.origins}
           onChange={handleInputChange}
         />
+
         <input
           type="text"
           name="destinations"
@@ -70,46 +75,64 @@ const Dashboard = () => {
           value={searchParams.destinations}
           onChange={handleInputChange}
         />
-        <input
-          type="text"
-          name="departure_time"
-          placeholder="Departure Time (ISO or 'now')"
-          value={searchParams.departure_time}
-          onChange={handleInputChange}
-        />
+
+        <div className="checkbox-field">
+          <input
+            type="checkbox"
+            id="useNow"
+            checked={useNow}
+            onChange={() => setUseNow(!useNow)}
+          />
+          <label htmlFor="useNow">Use current time (now)?</label>
+        </div>
+
+        {/* Show a date/time picker only if "useNow" is false */}
+        {!useNow && (
+          <input
+            type="datetime-local"
+            name="departure_time"
+            placeholder="Select departure date/time"
+            value={searchParams.departure_time}
+            onChange={handleInputChange}
+          />
+        )}
+
         <button type="submit">Search</button>
       </form>
-      <div className="route-cards">
-        {routes.length > 0 ? (
-          routes.map((route) => (
+
+      <div className="trip-cards">
+        {trips.length > 0 ? (
+          trips.map((trip) => (
             <div
-              className="route-card"
-              key={route._id}
-              onClick={() => handleRouteClick(route._id)}
+              className="trip-card"
+              key={trip._id}
+              onClick={() => handleTripClick(trip._id)}
             >
-              <h3>{route.vehicleName}</h3>
-              <p>
-                <strong>Origin:</strong> {route.origin}
-              </p>
-              <p>
-                <strong>Destination:</strong> {route.destination}
-              </p>
-              <p>
-                <strong>Duration:</strong> {route.duration}
-              </p>
-              <p>
-                <strong>Distance:</strong> {route.distance}
-              </p>
-              <p>
-                <strong>Departure:</strong>{" "}
-                {route.departure_time === "now"
-                  ? "Now"
-                  : new Date(route.departure_time * 1000).toLocaleString()}
-              </p>
+              <div className="card-header"><strong>Vehicle Name:</strong> {trip.vehName}</div>
+                <ul className="list-group">
+                  <li className="list-group-item">
+                    <strong>Type:</strong> {trip.vehType}
+                  </li>
+                  <li className="list-group-item">
+                    <strong>Origin:</strong> {trip.origins}
+                  </li>
+                  <li className="list-group-item">
+                    <strong>Destination:</strong> {trip.destinations}
+                  </li>
+                  <li className="list-group-item">
+                    <strong>Duration:</strong> {trip.duration}
+                  </li>
+                  <li className="list-group-item">
+                    <strong>Departure:</strong>{" "}
+                    {trip.departure_time === "now"
+                      ? "Now"
+                      : new Date(trip.departure_time * 1000).toLocaleString()}
+                  </li>
+                </ul>
             </div>
           ))
         ) : (
-          <p>No routes available. Try adjusting your search criteria.</p>
+          <p>No trips to display. Please enter your search criteria.</p>
         )}
       </div>
     </div>

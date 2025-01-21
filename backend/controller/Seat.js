@@ -1,63 +1,53 @@
-const Seat = require("../model/Seat")
+const Seat = require("../model/Seat");
 
 
+const getSeats = async (req, res) => {
+    const seats = await Seat.find();
+    res.status(200).json(seats);
+};
 
-const getSeats = async(req, res) => {
-    const seats = await Seat.find()
+const getSeat = async (req, res) => {
+    const { id } = req.params;
 
-    res.status(200).json(seats)
-}
+    const seat = await Seat.findById({ _id: id });
 
-const getSeat = async(req, res) => {
-    const {id} = req.params
+    res.status(200).json(seat);
+};
 
-    const seat = await Seat.findById({_id : id})
+const createSeat = async (req, res) => {
+    const { VehicleID, SeatNumber, SeatClass } = req.body;
 
-    res.status(200).json(seat)
-}
+    try {
+        if (!VehicleID || !SeatNumber || !SeatClass) {
+            throw new Error("All fields are required");
+        }
 
-const createSeat = async(req, res) => {
-
-    const {VehicleID, SeatNumber, SeatClass} = req.body
-
-    try{
-
-        const seat = await Seat.CreateSeat(VehicleID, SeatNumber, SeatClass)
-
-        res.status(200).json({seat})
+        const seat = await Seat.CreateSeat(VehicleID, SeatNumber, SeatClass);
+        res.status(200).json({ seat });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
     }
-    catch(err){
-        res.status(400).json({err: err.message})
+};
+
+const updateSeat = async (req, res) => {
+    const { VehicleID, SeatNumber, SeatClass } = req.body;
+
+    try {
+        const update = await Seat.updateSeats(VehicleID, SeatNumber, SeatClass);
+        res.status(200).json({ update });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
     }
-}
+};
 
-
-const updateSeat = async(req, res) => {
-    const {VehicleID, SeatNumber, SeatClass} = req.body
-    
-    try{
-        
-        const update = await Seat.updateSeats(VehicleID, SeatNumber, SeatClass)
-
-        res.status(200).json({update})
+const deleteSeat = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const seat = await Seat.findByIdAndDelete({ _id: id });
+        res.status(204).json("Seat Deleted✅");
+    } catch (err) {
+        res.status(400).json({ error: err.message });
     }
-    catch(err){
-        res.status(400).json({err: err.message})
-    }
-}
+};
 
-
-const deleteSeat  = async(req, res) => {
-    const {id} = req.params
-    try{
-        const seat = await Seat.findByIdAndDelete({_id: id})
-
-        res.status(204).json("Vehicle Deleted✅")
-    }
-    catch(err){
-        res.status(400).json({err: err.message})
-    }
-}
-
-
-module.exports = {getSeats, getSeat, createSeat, updateSeat, deleteSeat}
+module.exports = { getSeats, getSeat, createSeat, updateSeat, deleteSeat };

@@ -11,7 +11,7 @@ const TripRoutes = require('./route/Trip')
 const PaymentRoutes = require('./route/Payment')
 const StripeRoutes = require('./route/stripe')
 const BookingRoutes = require('./route/Booking')
-
+const Booking = require("./model/Booking");
 const app = express()
 
 
@@ -31,15 +31,25 @@ app.use('/Stripe',StripeRoutes);
 app.use('/Booking',BookingRoutes);
 
 
+const deleteAllSeats = async () => {
+    try {
+      await Booking.deleteMany({});
+      console.log("All seats deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting seats:", error);
+    }
+  };
 //Connection String
 mongoose.connect(process.env.MONGO_URI)
 .then(() =>{
     app.listen(process.env.PORT, () => {
         console.log(`App running on`,process.env.PORT, `and Connect To MongoDB`)
     })
-    
+    deleteAllSeats()
 }).catch((error) => {
     console.log(error)
 })
+
+
 
 
