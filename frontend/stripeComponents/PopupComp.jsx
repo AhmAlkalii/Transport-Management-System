@@ -19,7 +19,7 @@ export const PopupComp = ({ total, handleBuyTicket }) => {
     >
       <div>
         <h1 style={{ color: "#343a40", marginBottom: "20px" }}>Complete Your Payment</h1>
-        <PaymentComponent handleBuyTicket={handleBuyTicket} />
+        <PaymentComponent totalAmount={total} handleBuyTicket={handleBuyTicket} />
       </div>
     </Popup>
   );

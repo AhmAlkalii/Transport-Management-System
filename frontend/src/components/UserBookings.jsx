@@ -26,7 +26,7 @@ const MyBookings = () => {
       fetchBookings();
 
       // Set up periodic refresh
-      const intervalId = setInterval(fetchBookings, 1000); // Refresh every 10 seconds
+      const intervalId = setInterval(fetchBookings, 1000);
 
       // Cleanup the interval on component unmount
       return () => clearInterval(intervalId);

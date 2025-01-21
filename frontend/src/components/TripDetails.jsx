@@ -31,7 +31,7 @@ const TripDetails = () => {
 
   useEffect(() => {
     if (trip) {
-      // Calculate the total amount based on the number of selected seats
+     
       setTotalAmount(selectedSeats.length * trip.amount);
     }
   }, [selectedSeats, trip]);
@@ -62,7 +62,7 @@ const TripDetails = () => {
         UserID: user?.user?._id,
         SeatNumber: selectedSeats,
         SeatClass: seatClass,
-        Amount: totalAmount, // Total price for all selected seats
+        Amount: totalAmount, 
         PaymentMethod: "Stripe",
       };
 

@@ -4,11 +4,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const CheckoutForm = ({ handleBuyTicket }) => {
+const CheckoutForm = ({ totalAmount, handleBuyTicket }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
-
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSubmit = async (event) => {
@@ -24,33 +23,30 @@ const CheckoutForm = ({ handleBuyTicket }) => {
     const cardElement = elements.getElement(CardElement);
 
     try {
-      // Create a token for payment
-      const { token, error } = await stripe.createToken(cardElement);
+      const { token } = await stripe.createToken(cardElement);
 
-      if (error || !token) {
-        throw new Error(error?.message || "Failed to create payment token. Please check your card details.");
+      if (!token) {
+        throw new Error("Failed to create payment token. Please check your card details.");
       }
 
-      // Send the token to the backend for payment processing
-      const paymentResponse = await axios.post("http://localhost:4000/Stripe", {
+      const response = await axios.post("http://localhost:4000/Stripe", {
         token: token.id,
+        amount: totalAmount * 100, // Stripe expects amount in cents
       });
 
-      if (!paymentResponse.data.success) {
+      if (response.data.success) {
+        toast.success("Payment successful!");
+        setIsProcessing(false);
+        handleBuyTicket(); // Proceed with booking
+        navigate("/booking");
+      } else {
         throw new Error("Payment failed. Please try again.");
       }
-
-      // Call the handleBuyTicket function to create the booking
-      await handleBuyTicket();
-
-      toast.success("Payment and booking successful!");
-      navigate("/booking"); // Navigate to the booking page on success
     } catch (error) {
-      console.error("Error:", error.message);
-      toast.error(error.message || "An error occurred during payment or booking.");
-      navigate("/"); // Navigate to home page on failure
-    } finally {
+      console.error(error);
+      toast.error(error.message || "An error occurred during payment.");
       setIsProcessing(false);
+      navigate("/"); // Navigate to home page on failure
     }
   };
 
@@ -66,7 +62,7 @@ const CheckoutForm = ({ handleBuyTicket }) => {
             : styles.submitButton
         }
       >
-        {isProcessing ? "Processing..." : "Pay"}
+        {isProcessing ? "Processing..." : `Pay $${totalAmount}`}
       </button>
     </form>
   );
